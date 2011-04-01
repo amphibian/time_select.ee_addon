@@ -9,12 +9,12 @@ After installing and activating Time Select, choose it as your fieldtype in eith
 
 ## Template Tags
 
-When displaying your field within your templates, you can format the output using standard PHP date tokens (see the **Time** section of the [PHP date() function documention](http://php.net/manual/en/function.date.php)). If you don't format your field outout, the time's value in seconds will be displayed.
+When displaying your field within your templates, you can format the output using standard PHP date tokens (see the **Time** section of the [PHP date() function documention](http://php.net/manual/en/function.date.php)). If you don't format your field output, the time's value in seconds will be displayed.
 
 Example:
 
 `{my_time_field format="g:ia"}`
 
-This yields *7:00pm*.
+This yields **7:00pm**.
 
 *Time Select has been tested with ExpressionEngine 2.1.3, and is compatible with Matrix fields.*
