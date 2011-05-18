@@ -155,7 +155,7 @@ class Time_select_ft extends EE_Fieldtype {
 			$i++;
 		}
 		
-
+		if($data===FALSE) $data='';
 		
 		return form_dropdown($name, ($this->settings['display_style'] == '12hr') ? $standard : $military, $data);
 	}
