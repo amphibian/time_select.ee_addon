@@ -23,7 +23,7 @@ class Time_select_ft extends EE_Fieldtype {
 
 	var $info = array(
 		'name'		=> 'Time Select',
-		'version'	=> '1.0.1'
+		'version'	=> '1.0.2'
 	);
  
  			
@@ -167,6 +167,10 @@ class Time_select_ft extends EE_Fieldtype {
 	
 	function replace_tag($data, $params = array(), $tagdata = FALSE)
 	{
+		/*
+			Before and after parameter. 'Starts at '.'12:45'.' hour' 
+		    to avoid advanced conditionals like {if field_name != ""} ... {/if}
+		*/
 		$before = (isset($params['before']) ? $params['before'].' ' : '');
 		$after  = (isset($params['after'])  ? ' '.$params['after'] : '');
 		
