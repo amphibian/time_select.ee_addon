@@ -163,13 +163,16 @@ class Time_select_ft extends EE_Fieldtype {
 	
 	function replace_tag($data, $params = array(), $tagdata = FALSE)
 	{
+		$before = (isset($params['before']) ? $params['before'].' ' : '');
+		$after  = (isset($params['after'])  ? ' '.$params['after'] : '');
+		
 		if(isset($params['format']) && !empty($params['format']))
 		{
 			// In case someone uses EE's % syntax
 			$format = str_replace('%', '', $params['format']);
 			$data = gmdate($format, $data);
 		}
-		return $data;
+		return $before . $data . $after;
 	}
 
 }
