@@ -23,7 +23,7 @@ class Time_select_ft extends EE_Fieldtype {
 
 	var $info = array(
 		'name'		=> 'Time Select',
-		'version'	=> '1.0.1'
+		'version'	=> '1.0.2'
 	);
  
  			
@@ -36,8 +36,8 @@ class Time_select_ft extends EE_Fieldtype {
 
 	function display_settings($settings)
 	{
-		$styles = $this->get_display_styles();
-		$increments = $this->get_time_increments();
+		$styles = $this->_get_display_styles();
+		$increments = $this->_get_time_increments();
 		$this->EE->table->add_row(
 			$this->EE->lang->line('display_style'),
 			form_dropdown('display_style', $styles, (isset($settings['display_style'])) ? $settings['display_style'] : '', 'id="display_style"')
@@ -51,8 +51,8 @@ class Time_select_ft extends EE_Fieldtype {
 	
 	function display_cell_settings($settings)
 	{
-		$styles = $this->get_display_styles();
-		$increments = $this->get_time_increments();
+		$styles = $this->_get_display_styles();
+		$increments = $this->_get_time_increments();
 		return array(
 		    array($this->EE->lang->line('display_style'),
 		    form_dropdown('display_style', $styles, (isset($settings['display_style'])) ? $settings['display_style'] : '')),
@@ -63,7 +63,7 @@ class Time_select_ft extends EE_Fieldtype {
 	}
 
 	
-	function get_display_styles()
+	function _get_display_styles()
 	{		
 		return array(
 			'12hr' => $this->EE->lang->line('12hr'),
@@ -72,7 +72,7 @@ class Time_select_ft extends EE_Fieldtype {
 	}
 		
 
-	function get_time_increments()
+	function _get_time_increments()
 	{		
 		return array(
 			'15min' => $this->EE->lang->line('15min'),
@@ -93,14 +93,12 @@ class Time_select_ft extends EE_Fieldtype {
 
 	function display_field($data)
 	{
-
 		return $this->display($data, $this->field_name);
 	}
 	
 	
 	function display_cell($data)
 	{
-
 		return $this->display($data, $this->cell_name);
 	}	
 	
@@ -146,7 +144,7 @@ class Time_select_ft extends EE_Fieldtype {
 			{
 				/*
 					The keys (which are the DB values) are stored as seconds
-					so we can format them with gmdate() on the front-end.
+					so we can format them with decode_date() on the front-end.
 				*/
 				$s = ((intval($m) * 60) + ($i * 3600));
 				$standard[$s] = $h.':'.$m.' '.$ap;
@@ -169,9 +167,7 @@ class Time_select_ft extends EE_Fieldtype {
 	{
 		if(isset($params['format']) && !empty($params['format']))
 		{
-			// In case someone uses EE's % syntax
-			$format = str_replace('%', '', $params['format']);
-			$data = gmdate($format, $data);
+			$data = $this->EE->localize->decode_date($params['format'], $data, FALSE);
 		}
 		return $data;
 	}
