@@ -23,14 +23,14 @@ class Time_select_ft extends EE_Fieldtype {
 
 	var $info = array(
 		'name'		=> 'Time Select',
-		'version'	=> '1.0.0'
+		'version'	=> '1.0.1'
 	);
  
  			
 	function Time_select_ft()
 	{
 		parent::EE_Fieldtype();
-		$this->EE->lang->loadfile('time_select');		
+		$this->EE->lang->loadfile('time_select');	
 	}
 
 
@@ -155,7 +155,11 @@ class Time_select_ft extends EE_Fieldtype {
 			$i++;
 		}
 		
-		if($data===FALSE) $data='';
+		/*
+			Fix for SafeCracker, where 0 is equated with an empty string,
+			causing a double "selected" value. Caught by GDmac.
+		*/
+		if($data === FALSE) $data = '';
 		
 		return form_dropdown($name, ($this->settings['display_style'] == '12hr') ? $standard : $military, $data);
 	}
