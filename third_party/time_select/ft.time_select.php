@@ -165,18 +165,11 @@ class Time_select_ft extends EE_Fieldtype {
 	
 	function replace_tag($data, $params = array(), $tagdata = FALSE)
 	{
-		/*
-			Before and after parameter. 'Starts at '.'12:45'.' hour' 
-		    to avoid advanced conditionals like {if field_name != ""} ... {/if}
-		*/
-		$before = (isset($params['before']) ? $params['before'].' ' : '');
-		$after  = (isset($params['after'])  ? ' '.$params['after'] : '');
-		
 		if(isset($params['format']) && !empty($params['format']))
 		{
 			$data = $this->EE->localize->decode_date($params['format'], $data, FALSE);
 		}
-		return $before . $data . $after;
+		return $data;
 	}
 
 }
