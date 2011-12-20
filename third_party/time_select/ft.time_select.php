@@ -23,7 +23,7 @@ class Time_select_ft extends EE_Fieldtype {
 
 	var $info = array(
 		'name'		=> 'Time Select',
-		'version'	=> '1.0.3'
+		'version'	=> '1.0.4'
 	);
  
  			
@@ -151,6 +151,11 @@ class Time_select_ft extends EE_Fieldtype {
 			'minute' => '',
 			'ampm' => ''
 		);
+		
+		if(is_array($data))
+		{
+			$data = $this->save($data);
+		}
 			
 		// Turn the timestamp into something we can use
 		if($data != FALSE)
@@ -167,7 +172,7 @@ class Time_select_ft extends EE_Fieldtype {
 			{
 				$selected['minute'] = ($data % 3600)/60;
 	
-				$current_hours = floor($data/3600);
+				$current_hours = floor($data / 3600);
 				if($current_hours < 1)
 				{
 					$selected['hour'] = '12';
