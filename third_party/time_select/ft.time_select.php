@@ -23,7 +23,7 @@ class Time_select_ft extends EE_Fieldtype {
 
 	var $info = array(
 		'name'		=> 'Time Select',
-		'version'	=> '1.0.4'
+		'version'	=> '1.0.5'
 	);
  
  			
@@ -279,5 +279,23 @@ class Time_select_ft extends EE_Fieldtype {
 		}
 		return $data;
 	}
+	
+
+	function zenbu_display($entry_id, $channel_id, $data, $table_data = array(), $field_id, $settings, $rules = array())
+	{
+		$format = (isset($settings['setting'][$channel_id]['extra_options']['field_'.$field_id]['format'])) ? $settings['setting'][$channel_id]['extra_options']['field_'.$field_id]['format'] : '%g:%i%a';
+		return (!empty($data)) ? $this->EE->localize->decode_date($format, $data, FALSE) : '';
+
+	}
+	
+	
+	function zenbu_field_extra_settings($table_col, $channel_id, $extra_options)
+	{
+		$value = (isset($extra_options['format'])) ? $extra_options['format'] : '';
+		$settings = array(
+			'format' => form_label($this->EE->lang->line('time_select_time_format').NBS.form_input('settings['.$channel_id.']['.$table_col.'][format]', $value))
+		);
+		return $settings;
+	}	
 
 }
