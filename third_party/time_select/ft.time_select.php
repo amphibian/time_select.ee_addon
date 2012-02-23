@@ -273,11 +273,18 @@ class Time_select_ft extends EE_Fieldtype {
 	
 	function replace_tag($data, $params = array(), $tagdata = FALSE)
 	{
+		// show_empty ?
+		if ($data == '0' && isset($params['show_empty']) && $params['show_empty']=='no') return '';
+
+		// prepend and append to wrap tag in html and avoid conditionals
+		$prepend = (isset($params['prepend']) ? $params['prepend'] : '');
+		$append  = (isset($params['append'])  ? $params['append'] : '');
+		
 		if(isset($params['format']) && !empty($params['format']))
 		{
 			$data = $this->EE->localize->decode_date($params['format'], $data, FALSE);
 		}
-		return $data;
+		return $prepend . $data . $append;
 	}
 	
 
