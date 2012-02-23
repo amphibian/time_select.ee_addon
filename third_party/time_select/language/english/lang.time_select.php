@@ -7,5 +7,6 @@ $lang = array(
 	'time_increments' => 'Time Increments',
 	'15min' => '15 Minutes',
 	'30min' => '30 Minutes',
-	'1hour' => '1 Hour'
+	'1hour' => '1 Hour',
+	'time_select_time_format' => 'Time Format'
 );

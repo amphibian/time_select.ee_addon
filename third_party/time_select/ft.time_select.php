@@ -23,7 +23,7 @@ class Time_select_ft extends EE_Fieldtype {
 
 	var $info = array(
 		'name'		=> 'Time Select',
-		'version'	=> '1.0.2'
+		'version'	=> '1.0.5'
 	);
  
  			
@@ -89,6 +89,46 @@ class Time_select_ft extends EE_Fieldtype {
 			'time_increments' => $this->EE->input->post('time_increments')
 		);
 	}
+	
+	function save($data)
+	{
+		// Do we have something here?
+		if( !empty($data[0]) )
+		{
+			$hour = $data[0];			
+			$min = (empty($data[1])) ? 0 : $data[1];			
+			
+			// Did we post AM/PM? 12-hour time
+			if(isset($data[2]))
+			{
+				if($data[2] == 'am' && $hour == 12)
+				{
+					$hour = 0;
+				}
+				if($data[2] == 'pm')
+				{
+					$hour = ($hour < 12) ? $hour + 12 : 12;
+				}
+			}
+			else
+			{
+				// 24-hour
+				if($hour == 'midnight')
+				{
+					$hour = 0;
+				}
+			}
+			$s = ((intval($min) * 60) + ($hour * 3600));
+			return ($s == 0) ? 1 : $s;
+		}
+		return false;
+	}
+
+	
+	function save_cell($data)
+	{
+		return $this->save($data);
+	}
 
 
 	function display_field($data)
@@ -105,61 +145,129 @@ class Time_select_ft extends EE_Fieldtype {
 	
 	function display($data, $name)
 	{
-		$standard = array('' => '--');
-		$military = array('' => '--');
+		$selected = array(
+			'hour' => '',
+			'military_hour' => '',
+			'minute' => '',
+			'ampm' => ''
+		);
 		
-		switch($this->settings['time_increments'])
+		if(is_array($data))
 		{
-			case '15min':
-				$mins = array('00','15','30','45');
-				break;
-			case '30min':
-				$mins = array('00','30');
-				break;
-			case '1hour':
-				$mins = array('00');
-				break;							
+			$data = $this->save($data);
 		}
-		
-		$i = 0;
-		while($i < 24)
+			
+		// Turn the timestamp into something we can use
+		if($data != FALSE)
 		{
-			$k = str_pad($i, 2, '0', STR_PAD_LEFT);
-			if($i == 00)
+			if($data == 1)
 			{
-				$h = '12';
-				$ap = 'a.m.';
-			}
-			elseif($i < 12)
-			{
-				$h = $i;
-				$ap = 'a.m.';
+				// 1 = midnight
+				$selected['hour'] = '12';
+				$selected['military_hour'] = 'midnight';
+				$selected['minute'] = '0';
+				$selected['ampm'] = 'am';
 			}
 			else
 			{
-				$h = ($i == 12) ? '12' : ($i-12);
-				$ap = 'p.m.';
+				$selected['minute'] = ($data % 3600)/60;
+	
+				$current_hours = floor($data / 3600);
+				if($current_hours < 1)
+				{
+					$selected['hour'] = '12';
+					$selected['military_hour'] = 'midnight';
+					$selected['ampm'] = 'am';
+				}
+				elseif($current_hours < 12)
+				{
+					$selected['hour'] = $current_hours;
+					$selected['military_hour'] = $current_hours;
+					$selected['ampm'] = 'am';
+				}
+				else
+				{
+					$selected['hour'] = ($current_hours == 12) ? 12 : ($current_hours-12);
+					$selected['military_hour'] = $current_hours;
+					$selected['ampm'] = 'pm';		
+				}
 			}
-			foreach($mins as $m)
-			{
-				/*
-					The keys (which are the DB values) are stored as seconds
-					so we can format them with decode_date() on the front-end.
-				*/
-				$s = ((intval($m) * 60) + ($i * 3600));
-				$standard[$s] = $h.':'.$m.' '.$ap;
-				$military[$s] = $k.':'.$m;
-			}
-			$i++;
+		}
+				
+		$standard_hours = array(
+			'' => '--',
+			12 => '12',
+			1 => '01',
+			2 => '02',
+			3 => '03',
+			4 => '04',
+			5 => '05',
+			6 => '06',
+			7 => '07',
+			8 => '08',
+			9 => '09',
+			10 => '10',
+			11 => '11'
+		);
+
+		$military_hours = array(
+			'' => '--',
+			'midnight' => '00',
+			1 => '01',
+			2 => '02',
+			3 => '03',
+			4 => '04',
+			5 => '05',
+			6 => '06',
+			7 => '07',
+			8 => '08',
+			9 => '09',
+			10 => '10',
+			11 => '11',
+			12 => '12',
+			13 => '13',
+			14 => '14',
+			15 => '15',
+			16 => '16',
+			17 => '17',
+			18 => '18',
+			19 => '19',
+			20 => '20',
+			21 => '21',
+			22 => '22',
+			23 => '23'
+		);
+		
+		$am_pm = array(
+			'am' => 'AM',
+			'pm' => 'PM'
+		);
+				
+		switch($this->settings['time_increments'])
+		{
+			case '15min':
+				$mins = array('' => '--', 0 => '00', 15 => '15', 30 => '30', 45 => '45');
+				break;
+			case '30min':
+				$mins = array('' => '--', 0 => '00', 30 => '30');
+				break;
+			case '1hour':
+				$mins = array('' => '--', 0 => '00');
+				break;							
 		}
 		
-		/*
-			Fix for SafeCracker, where 0 is equated with an empty string,
-			causing a double "selected" value. Caught by GDmac.
-		*/
-		if($data === FALSE) $data = '';
-		
-		return form_dropdown($name, ($this->settings['display_style'] == '12hr') ? $standard : $military, $data);
+		if($this->settings['display_style'] == '12hr')
+		{
+			$r = form_dropdown($name.'[]',$standard_hours, $selected['hour']).NBS.':'.NBS;
+			$r .= form_dropdown($name.'[]', $mins, $selected['minute']).NBS.NBS;
+			$r .= form_dropdown($name.'[]', $am_pm, $selected['ampm']);
+		}
+		else
+		{
+			$r = form_dropdown($name.'[]', $military_hours, $selected['military_hour']).NBS.':'.NBS;
+			$r .= form_dropdown($name.'[]', $mins, $selected['minute']);
+		}
+		return $r;
 	}
 	
 	
@@ -171,5 +279,23 @@ class Time_select_ft extends EE_Fieldtype {
 		}
 		return $data;
 	}
+	
+
+	function zenbu_display($entry_id, $channel_id, $data, $table_data = array(), $field_id, $settings, $rules = array())
+	{
+		$format = (isset($settings['setting'][$channel_id]['extra_options']['field_'.$field_id]['format'])) ? $settings['setting'][$channel_id]['extra_options']['field_'.$field_id]['format'] : '%g:%i%a';
+		return (!empty($data)) ? $this->EE->localize->decode_date($format, $data, FALSE) : '';
+
+	}
+	
+	
+	function zenbu_field_extra_settings($table_col, $channel_id, $extra_options)
+	{
+		$value = (isset($extra_options['format'])) ? $extra_options['format'] : '';
+		$settings = array(
+			'format' => form_label($this->EE->lang->line('time_select_time_format').NBS.form_input('settings['.$channel_id.']['.$table_col.'][format]', $value))
+		);
+		return $settings;
+	}	
 
 }
