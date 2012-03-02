@@ -18,3 +18,7 @@ Example:
 This yields **7:00pm**.
 
 *Time Select has been tested with ExpressionEngine 2.1.3, and is compatible with Matrix fields.*
+
+
+## Datagrab Export / import
+if you want to export / import the fieldtype to another website, export it with format=%H:%i, (23:59). The accompanying datagrab type will parse and split the field on the : (colon) so that you'll be able to import it on the dev/staging server.
