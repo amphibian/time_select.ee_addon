@@ -23,7 +23,7 @@ class Time_select_ft extends EE_Fieldtype {
 
 	var $info = array(
 		'name'		=> 'Time Select',
-		'version'	=> '1.0.5'
+		'version'	=> '1.0.6'
 	);
  
  			
@@ -93,33 +93,41 @@ class Time_select_ft extends EE_Fieldtype {
 	function save($data)
 	{
 		// Do we have something here?
-		if( !empty($data[0]) )
+		if(!empty($data))
 		{
-			$hour = $data[0];			
-			$min = (empty($data[1])) ? 0 : $data[1];			
-			
-			// Did we post AM/PM? 12-hour time
-			if(isset($data[2]))
+			if( is_array($data) && !empty($data[0]) )
 			{
-				if($data[2] == 'am' && $hour == 12)
+				$hour = $data[0];			
+				$min = (empty($data[1])) ? 0 : $data[1];			
+			
+				// Did we post AM/PM? 12-hour time
+				if(isset($data[2]))
 				{
-					$hour = 0;
+					if($data[2] == 'am' && $hour == 12)
+					{
+						$hour = 0;
+					}
+					if($data[2] == 'pm')
+					{
+						$hour = ($hour < 12) ? $hour + 12 : 12;
+					}
 				}
-				if($data[2] == 'pm')
+				else
 				{
-					$hour = ($hour < 12) ? $hour + 12 : 12;
+					// 24-hour
+					if($hour == 'midnight')
+					{
+						$hour = 0;
+					}
 				}
+				$s = ((intval($min) * 60) + ($hour * 3600));
+				return ($s == 0) ? 1 : $s;
 			}
 			else
 			{
-				// 24-hour
-				if($hour == 'midnight')
-				{
-					$hour = 0;
-				}
+				// Someone might be passing an integer via the API
+				return (is_numeric($data) && $data <= 86400) ? $data : false;
 			}
-			$s = ((intval($min) * 60) + ($hour * 3600));
-			return ($s == 0) ? 1 : $s;
 		}
 		return false;
 	}
