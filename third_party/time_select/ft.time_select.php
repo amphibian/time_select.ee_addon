@@ -23,14 +23,17 @@ class Time_select_ft extends EE_Fieldtype {
 
 	var $info = array(
 		'name'		=> 'Time Select',
-		'version'	=> '1.0.6'
+		'version'	=> '1.0.7'
 	);
  
  			
 	function Time_select_ft()
 	{
-		parent::EE_Fieldtype();
-		$this->EE->lang->loadfile('time_select');	
+		EE_Fieldtype::__construct();
+		$this->EE->lang->loadfile('time_select');
+		
+		// Backwards-compatibility with pre-2.6 Localize class
+		$this->format_date_fn = (version_compare(APP_VER, '2.6', '>=')) ? 'format_date' : 'decode_date';
 	}
 
 
@@ -283,7 +286,7 @@ class Time_select_ft extends EE_Fieldtype {
 	{
 		if(isset($params['format']) && !empty($params['format']))
 		{
-			$data = $this->EE->localize->decode_date($params['format'], $data, FALSE);
+			$data = $this->EE->localize->{$this->format_date_fn}($params['format'], $data, FALSE);
 		}
 		return $data;
 	}
@@ -292,7 +295,7 @@ class Time_select_ft extends EE_Fieldtype {
 	function zenbu_display($entry_id, $channel_id, $data, $table_data = array(), $field_id, $settings, $rules = array())
 	{
 		$format = (isset($settings['setting'][$channel_id]['extra_options']['field_'.$field_id]['format'])) ? $settings['setting'][$channel_id]['extra_options']['field_'.$field_id]['format'] : '%g:%i%a';
-		return (!empty($data)) ? $this->EE->localize->decode_date($format, $data, FALSE) : '';
+		return (!empty($data)) ? $this->EE->localize->{$this->format_date_fn}($format, $data, FALSE) : '';
 
 	}
 	
