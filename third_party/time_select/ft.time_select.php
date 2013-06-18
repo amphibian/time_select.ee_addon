@@ -23,7 +23,7 @@ class Time_select_ft extends EE_Fieldtype {
 
 	var $info = array(
 		'name'		=> 'Time Select',
-		'version'	=> '1.0.8'
+		'version'	=> '1.0.9'
 	);
 
 
@@ -47,7 +47,7 @@ class Time_select_ft extends EE_Fieldtype {
 		);
 		$this->EE->table->add_row(
 			$this->EE->lang->line('time_increments'),
-			form_dropdown('time_increments', $increments, (isset($settings['time_increments'])) ? $settings['time_increments'] : '')
+			form_dropdown('time_increments', $increments, (isset($settings['time_increments'])) ? $settings['time_increments'] : '15min')
 		);
 	}
 
