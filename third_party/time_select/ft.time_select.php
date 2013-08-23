@@ -23,7 +23,7 @@ class Time_select_ft extends EE_Fieldtype {
 
 	var $info = array(
 		'name'		=> 'Time Select',
-		'version'	=> '1.0.9'
+		'version'	=> '1.1'
 	);
 
 
@@ -36,6 +36,12 @@ class Time_select_ft extends EE_Fieldtype {
 		$this->format_date_fn = (version_compare(APP_VER, '2.6', '>=')) ? 'format_date' : 'decode_date';
 	}
 
+
+	function accepts_content_type($name)
+	{
+		return ($name == 'channel' || $name == 'grid');
+	}
+	
 
 	function display_settings($settings)
 	{
@@ -50,8 +56,8 @@ class Time_select_ft extends EE_Fieldtype {
 			form_dropdown('time_increments', $increments, (isset($settings['time_increments'])) ? $settings['time_increments'] : '15min')
 		);
 	}
-
-
+	
+	
 	function display_cell_settings($settings)
 	{
 		$styles = $this->_get_display_styles();
@@ -62,7 +68,27 @@ class Time_select_ft extends EE_Fieldtype {
 		    array($this->EE->lang->line('time_increments'),
 		    form_dropdown('time_increments', $increments, (isset($settings['time_increments'])) ? $settings['time_increments'] : ''))
 		);
+	}
 
+
+	function grid_display_settings($settings)
+	{
+		$styles = $this->_get_display_styles();
+		$increments = $this->_get_time_increments();
+		return array(
+			$this->grid_dropdown_row(
+				$this->EE->lang->line('display_style'),
+				'display_style',
+				$styles,
+				(isset($settings['display_style'])) ? $settings['display_style'] : ''
+			),
+			$this->grid_dropdown_row(
+				$this->EE->lang->line('time_increments'),
+				'time_increments',
+				$increments,
+				(isset($settings['time_increments'])) ? $settings['time_increments'] : ''
+			)
+		);
 	}
 
 
@@ -93,6 +119,13 @@ class Time_select_ft extends EE_Fieldtype {
 			'time_increments' => $this->EE->input->post('time_increments')
 		);
 	}
+
+
+	function grid_save_settings($data)
+	{
+		return $data;
+	}
+
 
 	function save($data)
 	{
