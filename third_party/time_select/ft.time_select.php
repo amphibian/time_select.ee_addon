@@ -23,7 +23,7 @@ class Time_select_ft extends EE_Fieldtype {
 
 	var $info = array(
 		'name'		=> 'Time Select',
-		'version'	=> '1.1'
+		'version'	=> '1.1.1'
 	);
 
 
@@ -162,8 +162,18 @@ class Time_select_ft extends EE_Fieldtype {
 			}
 			else
 			{
-				// Someone might be passing an integer via the API
-				return (is_numeric($data) && $data <= 86400) ? $data : false;
+				// Someone is maybe be passing an integer via the API
+				if(is_numeric($data) && $data <= 86400)
+				{
+					return $data;
+				}
+
+				// Someone is maybe be passing HH:MM via the API
+				if(preg_match('/(\d\d?):(\d\d?)/', $data, $matches))
+				{
+					return ($matches[1] * 3600) + ($matches[1] * 60);
+				}
+				 
 			}
 		}
 		return false;
