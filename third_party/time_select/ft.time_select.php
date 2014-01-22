@@ -132,7 +132,7 @@ class Time_select_ft extends EE_Fieldtype {
 		// Do we have something here?
 		if(!empty($data))
 		{
-			if( is_array($data) && !empty($data[0]) )
+			if(is_array($data) && !empty($data[0]))
 			{
 				$hour = $data[0];
 				$min = (empty($data[1])) ? 0 : $data[1];
@@ -160,7 +160,8 @@ class Time_select_ft extends EE_Fieldtype {
 				$s = ((intval($min) * 60) + ($hour * 3600));
 				return ($s == 0) ? 1 : $s;
 			}
-			else
+			
+			if(is_string($data))
 			{
 				// Someone is maybe be passing an integer via the API
 				if(is_numeric($data) && $data <= 86400)
