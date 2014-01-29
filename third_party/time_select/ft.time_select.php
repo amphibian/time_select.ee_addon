@@ -172,7 +172,7 @@ class Time_select_ft extends EE_Fieldtype {
 				// Someone is maybe be passing HH:MM via the API
 				if(preg_match('/(\d\d?):(\d\d?)/', $data, $matches))
 				{
-					return ($matches[1] * 3600) + ($matches[1] * 60);
+					return ($matches[1] * 3600) + ($matches[2] * 60);
 				}
 				 
 			}
