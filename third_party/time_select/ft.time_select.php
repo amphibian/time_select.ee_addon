@@ -16,20 +16,20 @@
     Read the terms of the GNU General Public License
     at <http://www.gnu.org/licenses/>.
 
-    Copyright 2011 Derek Hogue
+    Copyright 2011-2015 Derek Hogue
 */
 
 class Time_select_ft extends EE_Fieldtype {
 
 	var $info = array(
 		'name'		=> 'Time Select',
-		'version'	=> '1.1.1'
+		'version'	=> '1.1.4'
 	);
 
 
-	function Time_select_ft()
+	function __construct()
 	{
-		EE_Fieldtype::__construct();
+		$this->EE =& get_instance();
 		$this->EE->lang->loadfile('time_select');
 
 		// Backwards-compatibility with pre-2.6 Localize class
@@ -90,6 +90,12 @@ class Time_select_ft extends EE_Fieldtype {
 			)
 		);
 	}
+	
+	
+	function display_var_settings($settings)
+	{
+		return $this->display_cell_settings($settings);
+	}
 
 
 	function _get_display_styles()
@@ -124,6 +130,12 @@ class Time_select_ft extends EE_Fieldtype {
 	function grid_save_settings($data)
 	{
 		return $data;
+	}
+	
+	
+	function save_var_settings($data)
+	{
+		return $this->save_settings($data);
 	}
 
 
@@ -185,6 +197,12 @@ class Time_select_ft extends EE_Fieldtype {
 	{
 		return $this->save($data);
 	}
+	
+	
+	function save_var_field($data)
+	{
+		return $this->save($data);
+	}
 
 
 	function display_field($data)
@@ -196,6 +214,12 @@ class Time_select_ft extends EE_Fieldtype {
 	function display_cell($data)
 	{
 		return $this->display($data, $this->cell_name);
+	}
+	
+	
+	function display_var_field($data)
+	{
+		return $this->display($data, $this->field_name);
 	}
 
 
@@ -337,6 +361,12 @@ class Time_select_ft extends EE_Fieldtype {
 			$data = $this->EE->localize->{$this->format_date_fn}($params['format'], $data, FALSE);
 		}
 		return $data;
+	}
+	
+	
+	function display_var_tag($data, $params, $tagdata)
+	{
+		return $this->replace_tag($data, $params, $tagdata);
 	}
 
 

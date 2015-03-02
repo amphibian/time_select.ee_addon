@@ -17,4 +17,4 @@ Example:
 
 This yields **7:00pm**.
 
-*Time Select has been tested with ExpressionEngine 2.1.3, and is compatible with Matrix fields.*
+*Time Select has been tested with ExpressionEngine 2.1.3, and is compatible with Matrix, Grid, and Low Variables fields.*
