@@ -23,7 +23,7 @@ class Time_select_ft extends EE_Fieldtype {
 
 	var $info = array(
 		'name'		=> 'Time Select',
-		'version'	=> '1.1.4'
+		'version'	=> '1.1.6'
 	);
 
 
@@ -111,6 +111,7 @@ class Time_select_ft extends EE_Fieldtype {
 	{
 		return array(
 			'1min' => $this->EE->lang->line('1min'),
+			'5min' => $this->EE->lang->line('5min'),
 			'15min' => $this->EE->lang->line('15min'),
 			'30min' => $this->EE->lang->line('30min'),
 			'1hour' => $this->EE->lang->line('1hour')
@@ -144,33 +145,44 @@ class Time_select_ft extends EE_Fieldtype {
 		// Do we have something here?
 		if(!empty($data))
 		{
-			if(is_array($data) && !empty($data[0]))
+			// Arrays come from an entry form
+			if(is_array($data))
 			{
-				$hour = $data[0];
-				$min = (empty($data[1])) ? 0 : $data[1];
-
-				// Did we post AM/PM? 12-hour time
-				if(isset($data[2]))
+				// At least an hour is required
+				if(!empty($data[0]))
 				{
-					if($data[2] == 'am' && $hour == 12)
+					$hour = $data[0];
+					$min = (empty($data[1])) ? 0 : $data[1];
+	
+					// Did we post AM/PM? 12-hour time
+					if(isset($data[2]))
 					{
-						$hour = 0;
+						if($data[2] == 'am' && $hour == 12)
+						{
+							$hour = 0;
+						}
+						if($data[2] == 'pm')
+						{
+							$hour = ($hour < 12) ? $hour + 12 : 12;
+						}
 					}
-					if($data[2] == 'pm')
+					else
 					{
-						$hour = ($hour < 12) ? $hour + 12 : 12;
+						// Otherwise, 24-hour time
+						if($hour == 'midnight')
+						{
+							$hour = 0;
+						}
 					}
+					$s = ((intval($min) * 60) + ($hour * 3600));
+					// Midnight gets set as 1 to prevent false falsiness
+					return ($s == 0) ? 1 : $s;
 				}
 				else
 				{
-					// 24-hour
-					if($hour == 'midnight')
-					{
-						$hour = 0;
-					}
+					// There was no hour set, so no go
+					return null;
 				}
-				$s = ((intval($min) * 60) + ($hour * 3600));
-				return ($s == 0) ? 1 : $s;
 			}
 			
 			if(is_string($data))
@@ -189,7 +201,7 @@ class Time_select_ft extends EE_Fieldtype {
 				 
 			}
 		}
-		return false;
+		return null;
 	}
 
 
@@ -328,6 +340,9 @@ class Time_select_ft extends EE_Fieldtype {
 			case '1min':
 				$mins = array('' => '--', 0 => '00', 1 => '01', 2 => '02', 3 => '03', 4 => '04', 5 => '05', 6 => '06', 7 => '07', 8 => '08', 9 => '09', 10 => '10', 11 => '11', 12 => '12', 13 => '13', 14 => '14', 15 => '15', 16 => '16', 17 => '17', 18 => '18', 19 => '19', 20 => '20', 21 => '21', 22 => '22', 23 => '23', 24 => '24', 25 => '25', 26 => '26', 27 => '27', 28 => '28', 29 => '29', 30 => '30', 31 => '31', 32 => '32', 33 => '33', 34 => '34', 35 => '35', 36 => '36', 37 => '37', 38 => '38', 39 => '39', 40 => '40', 41 => '41', 42 => '42', 43 => '43', 44 => '44', 45 => '45', 46 => '46', 47 => '47', 48 => '48', 49 => '49', 50 => '50', 51 => '51', 52 => '52', 53 => '53', 54 => '54', 55 => '55', 56 => '56', 57 => '57', 58 => '58', 59 => '59', 60 => '60');
 				break;
+			case '5min':
+				$mins = array('' => '--', 0 => '00', 5 => '5', 10 => '10', 15 => '15', 20 => '20', 25 => '25', 30 => '30', 35 => '35', 40 => '40', 45 => '45', 50 => '50', 55 => '55');
+				break;
 			case '15min':
 				$mins = array('' => '--', 0 => '00', 15 => '15', 30 => '30', 45 => '45');
 				break;
@@ -356,11 +371,14 @@ class Time_select_ft extends EE_Fieldtype {
 
 	function replace_tag($data, $params = array(), $tagdata = FALSE)
 	{
-		if(isset($params['format']) && !empty($params['format']))
+		if(!empty($data) && $data > 0)
 		{
-			$data = $this->EE->localize->{$this->format_date_fn}($params['format'], $data, FALSE);
+			if(isset($params['format']) && !empty($params['format']))
+			{
+				$data = $this->EE->localize->{$this->format_date_fn}($params['format'], $data, FALSE);
+			}
+			return $data;
 		}
-		return $data;
 	}
 	
 	

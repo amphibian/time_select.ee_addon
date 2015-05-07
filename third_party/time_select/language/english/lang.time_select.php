@@ -6,6 +6,7 @@ $lang = array(
 	'24hr' => '24-hour clock',
 	'time_increments' => 'Time Increments',
 	'1min' => '1 Minute',
+	'5min' => '5 Minutes',
 	'15min' => '15 Minutes',
 	'30min' => '30 Minutes',
 	'1hour' => '1 Hour',
