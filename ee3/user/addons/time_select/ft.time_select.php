@@ -19,11 +19,13 @@
     Copyright 2011-2015 Derek Hogue
 */
 
+include(PATH_THIRD.'/time_select/config.php');
+
 class Time_select_ft extends EE_Fieldtype {
 
 	var $info = array(
 		'name'		=> 'Time Select',
-		'version'	=> '1.2'
+		'version'	=> TIME_SELECT_VERSION
 	);
 	
 	var $display_styles;
@@ -56,6 +58,9 @@ class Time_select_ft extends EE_Fieldtype {
 
 	function display_settings($data)
 	{	
+		$time_format = ee()->session->userdata('time_format', ee()->config->item('time_format'));
+		$default_format = ($time_format == '12') ? '12hr' : '24hr';
+		
 		$settings = array(
 			'time_select' => array(
 				'label' => $this->info['name'],
@@ -68,7 +73,7 @@ class Time_select_ft extends EE_Fieldtype {
 							'display_style' => array(
 								'type' => 'select',
 								'choices' => $this->display_styles,
-								'value' => (isset($data['display_style'])) ? $data['display_style'] : ''
+								'value' => (isset($data['display_style'])) ? $data['display_style'] : $default_format
 							)
 						)
 					),
@@ -105,9 +110,21 @@ class Time_select_ft extends EE_Fieldtype {
 	{
 		return array(
 			'display_style' => ee('Request')->post('display_style'),
+			'field_fmt' => 'none',
+			'field_show_fmt' => 'n',
 			'time_increments' => ee('Request')->post('time_increments')
 		);
 	}
+	
+
+	function settings_modify_column($data)
+	{
+		$fields['field_id_'.$data['field_id']] = array(
+			'type' => 'INT',
+			'constraint' => 10
+		);
+		return $fields;
+	}	
 
 
 	function grid_save_settings($data)
