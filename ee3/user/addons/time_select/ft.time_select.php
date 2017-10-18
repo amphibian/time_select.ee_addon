@@ -403,5 +403,14 @@ class Time_select_ft extends EE_Fieldtype {
 		);
 		return $settings;
 	}
+	
+	function update($current = '')
+	{
+		if($current == $this->info['version'])
+		{
+			return FALSE;
+		}
+		return TRUE;
+	}	
 
 }

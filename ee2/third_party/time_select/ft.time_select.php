@@ -39,7 +39,7 @@ class Time_select_ft extends EE_Fieldtype {
 
 	function accepts_content_type($name)
 	{
-		return ($name == 'channel' || $name == 'grid');
+		return ($name == 'channel' || $name == 'grid' || $name == 'blocks/1');
 	}
 	
 
