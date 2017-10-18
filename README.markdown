@@ -21,4 +21,4 @@ When using as a Low Variables var, you'll ned to use low Variables' `parse` tag:
 
 `{exp:low_variables:parse var="lv_my_var" format="%g:%i%a"}`
 
-*Time Select requires ExpressionEngine 3.0.0 or greater, or ExpressionEngine 2.1.3 or greater, and is compatible with Matrix, Grid, and Low Variables fields.*
+*Time Select requires ExpressionEngine 3.0.0 or greater, or ExpressionEngine 2.1.3 or greater, and is compatible with Matrix, Grid, Blocks/Bloqs, and Low Variables fields.*
