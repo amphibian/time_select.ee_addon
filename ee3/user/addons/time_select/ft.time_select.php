@@ -135,66 +135,7 @@ class Time_select_ft extends EE_Fieldtype {
 
 	function save($data)
 	{
-		// Do we have something here?
-		if(!empty($data))
-		{
-			// Arrays come from an entry form
-			if(is_array($data))
-			{
-				// At least an hour is required
-				if(!empty($data[0]))
-				{
-					$hour = $data[0];
-					$min = (empty($data[1])) ? 0 : $data[1];
-	
-					// Did we post AM/PM? 12-hour time
-					if(isset($data[2]))
-					{
-						if($data[2] == 'am' && $hour == 12)
-						{
-							$hour = 0;
-						}
-						if($data[2] == 'pm')
-						{
-							$hour = ($hour < 12) ? $hour + 12 : 12;
-						}
-					}
-					else
-					{
-						// Otherwise, 24-hour time
-						if($hour == 'midnight')
-						{
-							$hour = 0;
-						}
-					}
-					$s = ((intval($min) * 60) + ($hour * 3600));
-					// Midnight gets set as 1 to prevent false falsiness
-					return ($s == 0) ? 1 : $s;
-				}
-				else
-				{
-					// There was no hour set, so no go
-					return null;
-				}
-			}
-			
-			if(is_string($data))
-			{
-				// Someone is maybe be passing an integer via the API
-				if(is_numeric($data) && $data <= 86400)
-				{
-					return $data;
-				}
-
-				// Someone is maybe be passing HH:MM via the API
-				if(preg_match('/(\d\d?):(\d\d?)/', $data, $matches))
-				{
-					return ($matches[1] * 3600) + ($matches[2] * 60);
-				}
-				 
-			}
-		}
-		return null;
+		return $this->_create_timestamp($data);
 	}
 
 
@@ -340,6 +281,7 @@ class Time_select_ft extends EE_Fieldtype {
 
 	function replace_tag($data, $params = array(), $tagdata = FALSE)
 	{
+		$data = $this->_create_timestamp($data);
 		if(!empty($data) && $data > 0)
 		{
 			if(isset($params['format']) && !empty($params['format']))
@@ -411,6 +353,70 @@ class Time_select_ft extends EE_Fieldtype {
 			return FALSE;
 		}
 		return TRUE;
-	}	
+	}
+	
+	function _create_timestamp($data)
+	{
+		// Do we have something here?
+		if(!empty($data))
+		{
+			// Arrays come from an entry form
+			if(is_array($data))
+			{
+				// At least an hour is required
+				if(!empty($data[0]))
+				{
+					$hour = $data[0];
+					$min = (empty($data[1])) ? 0 : $data[1];
+	
+					// Did we post AM/PM? 12-hour time
+					if(isset($data[2]))
+					{
+						if($data[2] == 'am' && $hour == 12)
+						{
+							$hour = 0;
+						}
+						if($data[2] == 'pm')
+						{
+							$hour = ($hour < 12) ? $hour + 12 : 12;
+						}
+					}
+					else
+					{
+						// Otherwise, 24-hour time
+						if($hour == 'midnight')
+						{
+							$hour = 0;
+						}
+					}
+					$s = ((intval($min) * 60) + ($hour * 3600));
+					// Midnight gets set as 1 to prevent false falsiness
+					return ($s == 0) ? 1 : $s;
+				}
+				else
+				{
+					// There was no hour set, so no go
+					return null;
+				}
+			}
+			
+			if(is_string($data))
+			{
+				// Someone is maybe be passing an integer via the API
+				if(is_numeric($data) && $data <= 86400)
+				{
+					return $data;
+				}
+
+				// Someone is maybe be passing HH:MM via the API
+				if(preg_match('/(\d\d?):(\d\d?)/', $data, $matches))
+				{
+					return ($matches[1] * 3600) + ($matches[2] * 60);
+				}
+				 
+			}
+		}
+		return null;
+	}
 
 }
