@@ -49,12 +49,16 @@ class Time_select_ft extends EE_Fieldtype {
 		);
 	}
 
+	public function accepts_content_type($name)
+    	{
+        	$acceptedTypes = [
+            		'channel',
+            		'grid',
+            		'blocks/1',
+        	];
 
-	function accepts_content_type($name)
-	{
-		return true;
-	}
-	
+        	return in_array($name, $acceptedTypes);
+    	}
 
 	function display_settings($data)
 	{	
