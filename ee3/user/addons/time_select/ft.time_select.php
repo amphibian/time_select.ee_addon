@@ -27,19 +27,19 @@ class Time_select_ft extends EE_Fieldtype {
 		'name'		=> 'Time Select',
 		'version'	=> TIME_SELECT_VERSION
 	);
-	
+
 	var $display_styles;
 	var $time_increments;
 
 	function __construct()
 	{
 		ee()->lang->loadfile('time_select');
-		
+
 		$this->display_styles = array(
 			'12hr' => lang('12hr'),
 			'24hr' => lang('24hr')
 		);
-		
+
 		$this->time_increments = array(
 			'1min' => lang('1min'),
 			'5min' => lang('5min'),
@@ -61,13 +61,13 @@ class Time_select_ft extends EE_Fieldtype {
 		);
 		return (in_array($name, $types));
 	}
-	
+
 
 	function display_settings($data)
-	{	
+	{
 		$time_format = ee()->session->userdata('time_format', ee()->config->item('time_format'));
 		$default_format = ($time_format == '12') ? '12hr' : '24hr';
-		
+
 		$settings = array(
 			'time_select' => array(
 				'label' => $this->info['name'],
@@ -122,7 +122,7 @@ class Time_select_ft extends EE_Fieldtype {
 			'time_increments' => ee('Request')->post('time_increments')
 		);
 	}
-	
+
 
 	function settings_modify_column($data)
 	{
@@ -131,7 +131,7 @@ class Time_select_ft extends EE_Fieldtype {
 			'constraint' => 10
 		);
 		return $fields;
-	}	
+	}
 
 
 	function grid_save_settings($data)
@@ -301,16 +301,16 @@ class Time_select_ft extends EE_Fieldtype {
 
 
 	/*
-		Low Variables	
+		Low Variables
 	*/
 	function var_display_field($data)
 	{
 		return $this->display($data, $this->name);
 	}
-	
-	
+
+
 	/*
-		Matrix	
+		Matrix
 	*/
 	function display_cell($data)
 	{
@@ -321,7 +321,7 @@ class Time_select_ft extends EE_Fieldtype {
 	{
 		return $this->save($data);
 	}
-	
+
 	function display_cell_settings($settings)
 	{
 		return array(
@@ -330,11 +330,11 @@ class Time_select_ft extends EE_Fieldtype {
 		    array(lang('time_increments'),
 		    form_dropdown('time_increments', $this->time_increments, (isset($settings['time_increments'])) ? $settings['time_increments'] : ''))
 		);
-	}	
+	}
 
 
 	/*
-		Zenbu	
+		Zenbu
 	*/
 	function zenbu_display($entry_id, $channel_id, $data, $table_data = array(), $field_id, $settings, $rules = array())
 	{
@@ -352,7 +352,7 @@ class Time_select_ft extends EE_Fieldtype {
 		);
 		return $settings;
 	}
-	
+
 	function update($current = '')
 	{
 		if($current == $this->info['version'])
@@ -361,7 +361,7 @@ class Time_select_ft extends EE_Fieldtype {
 		}
 		return TRUE;
 	}
-	
+
 	function _create_timestamp($data)
 	{
 		// Do we have something here?
@@ -375,7 +375,7 @@ class Time_select_ft extends EE_Fieldtype {
 				{
 					$hour = $data[0];
 					$min = (empty($data[1])) ? 0 : $data[1];
-	
+
 					// Did we post AM/PM? 12-hour time
 					if(isset($data[2]))
 					{
@@ -406,8 +406,8 @@ class Time_select_ft extends EE_Fieldtype {
 					return null;
 				}
 			}
-			
-			if(is_string($data))
+
+			if(is_string($data) OR is_int($data))
 			{
 				// Someone is maybe be passing an integer via the API
 				if(is_numeric($data) && $data <= 86400)
@@ -420,7 +420,7 @@ class Time_select_ft extends EE_Fieldtype {
 				{
 					return ($matches[1] * 3600) + ($matches[2] * 60);
 				}
-				 
+
 			}
 		}
 		return null;
