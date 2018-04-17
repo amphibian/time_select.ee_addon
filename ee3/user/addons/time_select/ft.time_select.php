@@ -52,7 +52,14 @@ class Time_select_ft extends EE_Fieldtype {
 
 	function accepts_content_type($name)
 	{
-		return true;
+		$types = array(
+			'blocks/1',
+			'channel',
+			'fluid_field',
+			'grid',
+			'low_variables'
+		);
+		return (in_array($name, $types));
 	}
 	
 
