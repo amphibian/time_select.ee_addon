@@ -2,5 +2,5 @@
 	
 	if( ! defined('TIME_SELECT_VERSION') )
 	{
-		define('TIME_SELECT_VERSION', '1.2.3');
+		define('TIME_SELECT_VERSION', '1.2.4');
 	}

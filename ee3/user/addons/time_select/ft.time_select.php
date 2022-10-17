@@ -332,11 +332,10 @@ class Time_select_ft extends EE_Fieldtype {
 		);
 	}
 
-
 	/*
 		Zenbu
 	*/
-	function zenbu_display($entry_id, $channel_id, $data, $table_data = array(), $field_id, $settings, $rules = array())
+	function zenbu_display($entry_id, $channel_id, $data, $table_data, $field_id, $settings, $rules)
 	{
 		$format = (isset($settings['setting'][$channel_id]['extra_options']['field_'.$field_id]['format'])) ? $settings['setting'][$channel_id]['extra_options']['field_'.$field_id]['format'] : '%g:%i%a';
 		return (!empty($data)) ? ee()->localize->format_date($format, $data, FALSE) : '';
